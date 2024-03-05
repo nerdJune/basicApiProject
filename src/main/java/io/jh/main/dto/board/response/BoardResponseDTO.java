@@ -1,0 +1,58 @@
+package io.jh.main.dto.board.response;
+
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.jh.main.model.board.BoardVO;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import lombok.*;
+import org.springframework.beans.BeanUtils;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
+@NoArgsConstructor
+public class BoardResponseDTO implements Serializable {
+
+    @Schema(name = "boardId", example = "1")
+    private Long boardId;
+
+    @Schema(name = "boardCategory", example = "2")
+    //변환 필요함
+    private Long boardCategory;
+
+    @Schema(name = "boardTitle", example = "대단히 반갑습니다.")
+    private String boardTitle;
+
+    @Schema(name = "boardContent", example = "상당히 고맙습니다.")
+    private String boardContent;
+
+    @Schema(name = "viewCount", example = "0")
+    private Long viewCount;     //event driven or trigger
+
+    @Schema(name = "replyCount", example = "0")
+    private Long replyCount;    //event driven or trigger
+
+    @Schema(name = "writerId", example = "1")
+    //이것도 변환 해야함 ㅋㅋ
+    private Long writerId; //member_id
+
+    @Schema(name = "writeDatetime", example = "writeDatetime")
+    private OffsetDateTime writeDatetime;
+
+    @Schema(name = "updateDatetime", example = "updateDatetime")
+    private OffsetDateTime updateDatetime;
+
+    @Schema(name = "nickName", example = "hi")
+    private String nickName;
+
+    @Builder
+    public BoardResponseDTO(BoardVO boardVO) {
+        BeanUtils.copyProperties(boardVO, this);
+    }
+
+}

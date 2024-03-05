@@ -1,0 +1,64 @@
+spring:
+  data:
+    jpa:
+      repositories:
+        enabled: true
+      database: mysql
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+      generate-ddl: false
+      show-sql: true
+      hibernate:
+        use-new-id-generator-mappings: false
+        ddl-auto: none
+      properties:
+        hibernate:
+          format_sql: true
+          allow_update_outside_transaction: true
+          default_batch_fetch_size: 1000
+          query:
+            in_clause_parameter_padding: true
+          jdbc:
+            batch_size: 100
+    redis:
+      host: 127.0.0.1
+      port: 6379
+
+  datasource:
+    main:
+      master:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/jhahn?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+        username: root
+        password: 1234
+  flyway:
+    enabled: true
+    url: jdbc:mysql://localhost:3306/jhahn?characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    user: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    locations: classpath:/db/common
+    baseline-on-migrate: true
+
+# cors 설정
+cors:
+  allowedOriginPatterns: "*"
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*"
+  allowCredentials: true
+  max-age: 3600
+
+springdoc:
+  version: '3.0.0'
+  api-docs:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    display-query-params-without-oauth2: true
+    doc-expansion: none
+  paths-to-match:
+    - /main/v1/**
