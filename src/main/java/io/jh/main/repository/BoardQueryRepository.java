@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -61,7 +62,9 @@ public class BoardQueryRepository extends QuerydslRepositorySupport {
                                 search(searchText, type),
                                 boardVO.deleteYn.eq("N")
                         )
-                        .orderBy(boardVO.writeDatetime.desc());
+                        .orderBy(
+                                boardVO.boardId.desc(),
+                                boardVO.writeDatetime.desc());
 
         query = query.offset(pageable.getOffset()).limit(pageable.getPageSize());
         List<BoardResponseDTO> content = query.fetch();
@@ -72,8 +75,10 @@ public class BoardQueryRepository extends QuerydslRepositorySupport {
 
     public BooleanExpression search(String searchText, BoardSearchTypeEnum type) {
         if(BoardSearchTypeEnum.TITLE.equals(type)) {
+            if(!StringUtils.hasText(searchText)) return null;
             return boardVO.boardTitle.contains(searchText);
         } else if(BoardSearchTypeEnum.CONTENT.equals(type)) {
+            if(!StringUtils.hasText(searchText)) return null;
             return boardVO.boardContent.contains(searchText);
         } else if(BoardSearchTypeEnum.WRITER.equals(type)) {
             return boardVO.writerId.eq(Long.parseLong(searchText));

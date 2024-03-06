@@ -50,6 +50,13 @@ public class MemberService {
         System.out.println("단건 조회 > " + memberVO.toString());
         return MemberResponseDTO.builder().memberVO(memberVO).build();
     }
+
+    public MemberVO selectMemberInfo(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> {
+            logger.error("존재하지 않는 회원입니다. 조회시간 : {}");
+            throw new RuntimeException("누구야 이사람");
+        });
+    }
     
     public Long selectMemberId(String nickName) {
         Optional<MemberVO> memberVO = memberRepository.findByNickName(nickName);

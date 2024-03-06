@@ -3,6 +3,7 @@ package io.jh.main.service;
 import io.jh.main.dto.board.request.BoardWriteRequestDTO;
 import io.jh.main.dto.board.response.BoardResponseDTO;
 import io.jh.main.enums.BoardSearchTypeEnum;
+import io.jh.main.model.MemberVO;
 import io.jh.main.model.board.BoardVO;
 import io.jh.main.repository.BoardQueryRepository;
 import io.jh.main.repository.BoardRepository;
@@ -72,8 +73,14 @@ public class BoardService {
             throw new RuntimeException("이 글 뭐야");
         });
 
+        MemberVO memberVO = memberService.selectMemberInfo(boardVO.getWriterId());
+
         //BoardResponse
-        return BoardResponseDTO.builder().boardVO(boardVO).build();
+        return BoardResponseDTO.builder()
+                .boardVO(boardVO)
+                .nickName(memberVO.getNickName())
+                .email(memberVO.getEmail())
+                .build();
     }
 
     /*

@@ -50,9 +50,14 @@ public class BoardResponseDTO implements Serializable {
     @Schema(name = "nickName", example = "hi")
     private String nickName;
 
+    @Schema(name = "email", example = "zzzskys@naver.com")
+    private String email;
+
     @Builder
-    public BoardResponseDTO(BoardVO boardVO) {
+    public BoardResponseDTO(BoardVO boardVO, String nickName, String email) {
         BeanUtils.copyProperties(boardVO, this);
+        this.nickName = nickName;
+        this.email = email;
     }
 
 }

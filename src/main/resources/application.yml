@@ -37,7 +37,7 @@ spring:
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
     locations: classpath:/db/common
-    baseline-on-migrate: true
+    baseline-on-migrate: false
 
 # cors 설정
 cors:

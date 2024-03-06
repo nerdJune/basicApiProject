@@ -1,4 +1,4 @@
-CREATE TABLE `jhahn`.`board` (
+CREATE TABLE `board` (
  `board_id` BIGINT NOT NULL AUTO_INCREMENT,
  `board_category` TINYINT(1) NOT NULL,
  `board_title` VARCHAR(300) NOT NULL,
