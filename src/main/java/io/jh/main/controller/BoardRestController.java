@@ -50,7 +50,6 @@ public class BoardRestController {
             parameters = {@Parameter(name = "boardId", description = "게시글 아이디")})
     @GetMapping("/{boardId}")
     public ResponseEntity<ResponseData<BoardResponseDTO>> selectBoard(@PathVariable(name = "boardId") Long boardId) {
-        System.out.println("selectBoard >>>>>>> " + boardId);
         return ResponseUtility.createGetSuccessResponse(boardService.selectBoard(boardId));
     }
 
@@ -70,7 +69,6 @@ public class BoardRestController {
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sort", required = false) String sort) {
         Pageable pageable = CustomPageRequest.of(page, size, sort);
-        System.out.println("selectBoardList >>>>>>> " + searchText);
         return ResponseUtility.createSuccessPagingResponse(
                 boardService.selectBoardList(searchText, type, pageable));
 

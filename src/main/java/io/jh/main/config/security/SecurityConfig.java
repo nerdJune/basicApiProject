@@ -37,40 +37,41 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        //따로 제외 할 녀석들 모으기
         return web -> web.ignoring()
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
+                .requestMatchers(new AntPathRequestMatcher("/api-docs/**"))
+                ;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf((csrfConfig) ->
-                        csrfConfig.disable()
-                ) // 1번
-                .headers((headerConfig) ->
-                        headerConfig.frameOptions(frameOptionsConfig ->
-                                frameOptionsConfig.disable()
-                        )
-                )// 2번
-                .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests
-                                //.requestMatchers(PathRequest.toH2Console()).permitAll()
-
-                                .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/")).permitAll()
-                                .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/login/**")).permitAll()
-                                //.requestMatchers("/main/**", "/main/v1/board/**").hasRole(RoleTypeEnum.USER.name())
-                                .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**")).permitAll()
-                                //.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(RoleTypeEnum.ADMIN.name())
-                                .anyRequest().authenticated()
-                )// 3번
-                .exceptionHandling((exceptionConfig) ->
-                        exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
-                )
-                .logout((logoutConfig) ->
-                        logoutConfig.logoutSuccessUrl("/")
-                );
-                //.userDetailsService(myUserDetailsService); ; // 401 403 관련 예외처리
+        http.csrf((csrfConfig) ->
+                    csrfConfig.disable()
+            ) // 1번
+            .headers((headerConfig) ->
+                    headerConfig.frameOptions(frameOptionsConfig ->
+                            frameOptionsConfig.disable()
+                    )
+            )// 2번
+            .authorizeHttpRequests((authorizeRequests) ->
+                    authorizeRequests
+                            //.requestMatchers(PathRequest.toH2Console()).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/")).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/login/**")).permitAll()
+                            //.requestMatchers("/main/**", "/main/v1/board/**").hasRole(RoleTypeEnum.USER.name())
+                            .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**")).permitAll()
+                            .anyRequest().authenticated()
+            )// 3번
+            .exceptionHandling((exceptionConfig) ->
+                    exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
+            )
+            .logout((logoutConfig) ->
+                    logoutConfig.logoutSuccessUrl("/")
+            );
+            //.userDetailsService(myUserDetailsService); ; // 401 403 관련 예외처리
 
         return http.build();
     }

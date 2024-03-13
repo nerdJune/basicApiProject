@@ -7,6 +7,7 @@ import io.jh.main.domain.MemberVO;
 import io.jh.main.domain.board.BoardVO;
 import io.jh.main.repository.BoardQueryRepository;
 import io.jh.main.repository.BoardRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class BoardService {
         boardRepository.save(boardVO);
     }
 
+    @Transactional
     public void updateBoard(Long boardId, BoardWriteRequestDTO boardWriteRequestDTO) {
 
         //게시글 존재 여부 확인
@@ -57,16 +59,17 @@ public class BoardService {
         boardVO.setBoardTitle(boardWriteRequestDTO.getBoardTitle());
         boardVO.setBoardContent(boardWriteRequestDTO.getBoardContent());
         boardVO.setUpdateDatetime(OffsetDateTime.now());
-        boardRepository.save(boardVO);
+
+        //jpa dirty check
+        //boardRepository.save(boardVO);
     }
 
     /*
-        게시글 조회(검색)
+        게시글 조회
             단건 조회
                 - 게시글 id > eq
             
      */
-
     public BoardResponseDTO selectBoard(Long boardId) {
         BoardVO boardVO = boardRepository.findById(boardId).orElseThrow(() -> {
             logger.error("존재 하지 않는 게시물 입니다.");
