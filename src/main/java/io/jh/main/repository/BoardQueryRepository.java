@@ -6,7 +6,7 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import io.jh.main.dto.board.response.BoardResponseDTO;
 import io.jh.main.enums.BoardSearchTypeEnum;
-import io.jh.main.model.board.BoardVO;
+import io.jh.main.domain.board.BoardVO;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,8 +20,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
-import static io.jh.main.model.board.QBoardVO.boardVO;
-import static io.jh.main.model.QMemberVO.memberVO;
+import static io.jh.main.domain.board.QBoardVO.boardVO;
+import static io.jh.main.domain.QMemberVO.memberVO;
 
 @Repository
 @Slf4j

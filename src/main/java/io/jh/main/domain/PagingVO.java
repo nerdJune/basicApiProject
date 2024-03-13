@@ -1,4 +1,4 @@
-package io.jh.main.model;
+package io.jh.main.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;

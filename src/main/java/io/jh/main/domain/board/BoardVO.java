@@ -1,4 +1,4 @@
-package io.jh.main.model.board;
+package io.jh.main.domain.board;
 
 import io.jh.main.dto.board.request.BoardWriteRequestDTO;
 import jakarta.persistence.*;
@@ -9,7 +9,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.time.OffsetDateTime;
 
-@Entity
+@Entity(name = "board")
 @Table(name = "board")
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

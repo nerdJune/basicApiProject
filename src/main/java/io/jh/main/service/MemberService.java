@@ -2,7 +2,7 @@ package io.jh.main.service;
 
 import io.jh.main.dto.member.response.MemberResponseDTO;
 import io.jh.main.dto.member.request.MemberJoinRequestDTO;
-import io.jh.main.model.MemberVO;
+import io.jh.main.domain.MemberVO;
 import io.jh.main.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     //회원 가입
     public void joinUser(MemberJoinRequestDTO memberJoinRequestDTO) {
 
@@ -33,8 +36,6 @@ public class MemberService {
         //저장 전 DTO -> VO
         MemberVO memberVO = MemberVO.builder().memberJoinRequestDTO(memberJoinRequestDTO).joinUserDataBuilder();
 
-        //System.out.println("memberVO >> " + memberVO);
-        //System.out.println("memberJoinRequestDTO > " + memberJoinRequestDTO);
         memberRepository.save(memberVO);
     }
 
@@ -81,6 +82,14 @@ public class MemberService {
                 pageable,
                 memberList.size()
         );
+    }
+
+    public MemberVO userLogin(String nickName) {
+        return memberRepository.findByNickName(nickName).orElseThrow(
+                    () -> {
+            logger.error("존재하지 않는 회원입니다. 조회시간 : {}");
+            throw new RuntimeException("누구야 이사람");
+        });
     }
 
     //가입 시 닉네임 존재 여부

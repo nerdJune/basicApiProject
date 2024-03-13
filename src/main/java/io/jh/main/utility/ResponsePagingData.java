@@ -1,6 +1,6 @@
 package io.jh.main.utility;
 
-import io.jh.main.model.PagingVO;
+import io.jh.main.domain.PagingVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.data.domain.Page;

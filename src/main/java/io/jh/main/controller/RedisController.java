@@ -1,11 +1,10 @@
 package io.jh.main.controller;
 
-import io.jh.main.model.BasicDataViewVO;
+import io.jh.main.domain.BasicDataViewVO;
 import io.jh.main.service.RedisService;
 import io.jh.main.utility.ResponseData;
 import io.jh.main.utility.ResponseUtility;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

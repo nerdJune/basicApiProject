@@ -1,5 +1,4 @@
-package io.jh.main.model;
-
+package io.jh.main.domain;
 
 import io.jh.main.dto.member.request.MemberJoinRequestDTO;
 import jakarta.persistence.*;
@@ -39,7 +38,7 @@ public class MemberVO {
     private String authType;
 
     @Column(name = "auth_role")
-    private String authRole;
+    private String authRole;    //ROLE_USER,ROLE_ADMIN
 
     @Column(name = "password_wrong_count")
     private Long passwordWrongCount;    //비밀번호 틀린 횟수

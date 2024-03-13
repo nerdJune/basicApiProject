@@ -1,76 +1,107 @@
 package io.jh.main.config.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jh.main.enums.member.RoleTypeEnum;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import java.util.Arrays;
+import java.io.PrintWriter;
+
 
 @Configuration
-//@EnableWebSecurity
-@RequiredArgsConstructor
+@EnableWebSecurity
 @Slf4j
 public class SecurityConfig {
 
-//    private final CorsProperties corsProperties;
-//
-//    @Bean
-//    public SecurityFilterChain filterChain(
-//            HttpSecurity http
-//            //, CustomAuthenticationFilter customAuthenticationFilter,
-//            //JwtAuthorizationFilter jwtAuthorizationFilter
-//    ) throws Exception {
-//        log.debug("[+] WebSecurityConfig Start !!! ");
-//        return http
-//                //.csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers("/resources/**").permitAll()
-//                        .requestMatchers("/main/v1").permitAll()
-//                        .requestMatchers("/main/v1/user").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                //.addFilterBefore(jwtAuthorizationFilter, BasicAuthenticationFilter.class)
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .formLogin(login -> login
-//                        .loginPage("/login")
-//                        .successHandler(new SimpleUrlAuthenticationSuccessHandler("/main/v1/main"))
-//                        .permitAll()
-//                )
-//                //.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
-//    @Bean
-//    public PasswordEncoder passwordEncoder(){
-//        //비밀번호 암호화
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        //정적 자원 접근 허용
-//        return web -> web.ignoring()
-//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-//    }
-//
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration corsConfig = new CorsConfiguration();
-//        corsConfig.setAllowedHeaders(Arrays.asList(corsProperties.getAllowedHeaders().split(",")));
-//        corsConfig.setAllowedMethods(Arrays.asList(corsProperties.getAllowedMethods().split(",")));
-//        corsConfig.setAllowedOriginPatterns(
-//                Arrays.asList(corsProperties.getAllowedOriginPatterns().split(",")));
-//        corsConfig.setAllowCredentials(true);
-//        corsConfig.setMaxAge(corsProperties.getMaxAge());
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", corsConfig);
-//
-//        return source;
-//    }
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .csrf((csrfConfig) ->
+                        csrfConfig.disable()
+                ) // 1번
+                .headers((headerConfig) ->
+                        headerConfig.frameOptions(frameOptionsConfig ->
+                                frameOptionsConfig.disable()
+                        )
+                )// 2번
+                .authorizeHttpRequests((authorizeRequests) ->
+                        authorizeRequests
+                                //.requestMatchers(PathRequest.toH2Console()).permitAll()
+
+                                .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/")).permitAll()
+                                .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/login/**")).permitAll()
+                                //.requestMatchers("/main/**", "/main/v1/board/**").hasRole(RoleTypeEnum.USER.name())
+                                .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**")).permitAll()
+                                //.requestMatchers("/admins/**", "/api/v1/admins/**").hasRole(RoleTypeEnum.ADMIN.name())
+                                .anyRequest().authenticated()
+                )// 3번
+                .exceptionHandling((exceptionConfig) ->
+                        exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
+                )
+                .logout((logoutConfig) ->
+                        logoutConfig.logoutSuccessUrl("/")
+                );
+                //.userDetailsService(myUserDetailsService); ; // 401 403 관련 예외처리
+
+        return http.build();
+    }
+
+    private final AuthenticationEntryPoint unauthorizedEntryPoint =
+            (request, response, authException) -> {
+                ErrorResponse fail = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Spring security unauthorized...");
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                String json = new ObjectMapper().writeValueAsString(fail);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                PrintWriter writer = response.getWriter();
+                writer.write(json);
+                writer.flush();
+            };
+
+    private final AccessDeniedHandler accessDeniedHandler =
+            (request, response, accessDeniedException) -> {
+                ErrorResponse fail = new ErrorResponse(HttpStatus.FORBIDDEN, "Spring security forbidden...");
+                response.setStatus(HttpStatus.FORBIDDEN.value());
+                String json = new ObjectMapper().writeValueAsString(fail);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                PrintWriter writer = response.getWriter();
+                writer.write(json);
+                writer.flush();
+            };
+
+    @Getter
+    @RequiredArgsConstructor
+    public class ErrorResponse {
+
+        private final HttpStatus status;
+        private final String message;
+    }
 }

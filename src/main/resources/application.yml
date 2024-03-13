@@ -38,6 +38,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     locations: classpath:/db/common
     baseline-on-migrate: false
+  h2:
+    console:
+      enabled: false
 
 # cors 설정
 cors:

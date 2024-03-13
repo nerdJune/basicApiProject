@@ -65,7 +65,7 @@ public class MainTransactionManagerConfig {
         emfb.setDataSource(dataSource);
         emfb.setPersistenceProvider(new HibernatePersistenceProvider());
         emfb.setPersistenceUnitName("mainEntityManager");
-        emfb.setPackagesToScan("io.jh.main.model");
+        emfb.setPackagesToScan("io.jh.main.domain");
         Properties properties = new Properties();
         properties.setProperty("hibernate.id.new_generator_mappings", useNewIdGeneratorMappings);
         properties.setProperty("hibernate.hbm2ddl.auto", ddlAuto);

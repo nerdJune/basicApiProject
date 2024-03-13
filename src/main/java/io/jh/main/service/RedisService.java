@@ -1,6 +1,6 @@
 package io.jh.main.service;
 
-import io.jh.main.model.BasicDataViewVO;
+import io.jh.main.domain.BasicDataViewVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;

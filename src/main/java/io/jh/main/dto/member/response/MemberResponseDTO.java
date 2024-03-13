@@ -2,9 +2,8 @@ package io.jh.main.dto.member.response;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.jh.main.model.MemberVO;
+import io.jh.main.domain.MemberVO;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
