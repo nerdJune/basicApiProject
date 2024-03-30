@@ -1,11 +1,9 @@
 package io.jh.main.utility;
 
-import io.jh.main.dto.login.SignInRequestDTO;
 import io.jh.main.dto.login.SignInResponseDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Role;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

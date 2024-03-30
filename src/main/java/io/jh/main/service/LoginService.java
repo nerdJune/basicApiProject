@@ -8,10 +8,6 @@ import io.jh.main.utility.TokenUtility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +35,6 @@ public class LoginService {
     }
 
     private void checkPassword(String loginPassword, String pw) {
-        log.info(">> "+passwordEncoder.matches(loginPassword, pw));
         if(!passwordEncoder.matches(loginPassword, pw)) {
             throw new BadCredentialsException("wrong password!");
         }
