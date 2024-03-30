@@ -35,6 +35,7 @@ public class MemberService {
 
         //저장 전 DTO -> VO
         MemberVO memberVO = MemberVO.builder().memberJoinRequestDTO(memberJoinRequestDTO).joinUserDataBuilder();
+        memberVO.setPassword(passwordEncoder.encode(memberJoinRequestDTO.getPassword()));
 
         memberRepository.save(memberVO);
     }
@@ -84,8 +85,8 @@ public class MemberService {
         );
     }
 
-    public MemberVO userLogin(String nickName) {
-        return memberRepository.findByNickName(nickName).orElseThrow(
+    public MemberVO userLogin(String email) {
+        return memberRepository.findByEmail(email).orElseThrow(
                     () -> {
             logger.error("존재하지 않는 회원입니다. 조회시간 : {}");
             throw new RuntimeException("누구야 이사람");

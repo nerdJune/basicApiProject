@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +27,7 @@ public class BoardRestController {
             method = "POST",
             description = "매우 쉽게 글 작성. 바로 써짐")
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ResponseData<Void>> writeBoard(@RequestBody BoardWriteRequestDTO boardWriteRequestDTO) {
         boardService.writeBoard(boardWriteRequestDTO);
         return ResponseUtility.createPostSyncSuccessResponse();
@@ -36,6 +38,7 @@ public class BoardRestController {
             method = "POST",
             description = "매우 쉽게 글 수정. 게시 글이 존재 하는 지만 체크.")
     @PostMapping("/{boardId}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<ResponseData<Void>> updateBoard(
             @PathVariable(name = "boardId") Long boardId,
             @RequestBody BoardWriteRequestDTO boardWriteRequestDTO) {

@@ -1,7 +1,10 @@
 package io.jh.main.controller;
 
+import io.jh.main.dto.login.SignInRequestDTO;
+import io.jh.main.dto.login.SignInResponseDTO;
 import io.jh.main.dto.member.response.MemberResponseDTO;
 import io.jh.main.dto.member.request.MemberJoinRequestDTO;
+import io.jh.main.service.LoginService;
 import io.jh.main.service.MemberService;
 import io.jh.main.utility.ResponseData;
 import io.jh.main.utility.ResponsePagingData;
@@ -53,5 +56,15 @@ public class MemberRestController {
         Pageable pageable = CustomPageRequest.of(page, size, sort);
         return ResponseUtility.createSuccessPagingResponse(
                 memberService.selectMemberList(pageable));
+    }
+
+    private final LoginService loginService;
+
+    @PostMapping("/login")
+    public ResponseEntity<ResponseData<SignInResponseDTO>> signIn(
+            @RequestBody SignInRequestDTO signInRequestDTO) {
+
+        return ResponseUtility.createPostSyncSuccessResponse(
+                loginService.userLogin(signInRequestDTO));
     }
 }

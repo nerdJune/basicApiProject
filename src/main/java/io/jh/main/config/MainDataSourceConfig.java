@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 @Configuration(proxyBeanMethods = false)
 public class MainDataSourceConfig {
 
-    //@Value("${spring.datasource.marketplace.reader.hikari.driver-class-name}")
     @Value("${spring.datasource.main.master.driver-class-name}")
     String driverClassName;
 
@@ -20,6 +19,7 @@ public class MainDataSourceConfig {
 
     @Value("${spring.datasource.main.master.username}")
     String userName;
+
     @Value("${spring.datasource.main.master.password}")
     String password;
 
@@ -35,11 +35,4 @@ public class MainDataSourceConfig {
         mainDataSource.setMaxLifetime(300000);
         return mainDataSource;
     }
-
-    /*
-    marketplaceReaderDataSource.setMaximumPoolSize(readerMaximumPoolSize);
-        marketplaceReaderDataSource.setMinimumIdle(readerMinimumIdle);
-        marketplaceReaderDataSource.setReadOnly(true);
-        marketplaceReaderDataSource.setMaxLifetime(300000);
-     */
 }

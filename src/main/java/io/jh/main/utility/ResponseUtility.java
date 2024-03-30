@@ -20,6 +20,10 @@ public class ResponseUtility {
         return createSuccessResponse(null, HttpStatus.OK);
     }
 
+    public static <T> ResponseEntity<ResponseData<T>> createPostSyncSuccessResponse(T data) {
+        return createSuccessResponse(data, HttpStatus.OK);
+    }
+
     private static <T> ResponseData<T> createSuccessResponseData(
             String statusCode, T data) {
         if (data == null) data = (T) new EmptyJsonResponse();

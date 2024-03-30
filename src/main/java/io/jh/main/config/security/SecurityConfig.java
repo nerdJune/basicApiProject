@@ -1,23 +1,25 @@
 package io.jh.main.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jh.main.enums.member.RoleTypeEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
@@ -28,10 +30,15 @@ import java.io.PrintWriter;
 @Configuration
 @EnableWebSecurity
 @Slf4j
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAuthFilter jwtAuthFilter;
+
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -42,12 +49,12 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
                 .requestMatchers(new AntPathRequestMatcher("/api-docs/**"))
+                .requestMatchers(new AntPathRequestMatcher("/main/v1/user/login"))
                 ;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
         http.csrf((csrfConfig) ->
                     csrfConfig.disable()
             ) // 1번
@@ -55,26 +62,36 @@ public class SecurityConfig {
                     headerConfig.frameOptions(frameOptionsConfig ->
                             frameOptionsConfig.disable()
                     )
-            )// 2번
+            )
+                // 2번
             .authorizeHttpRequests((authorizeRequests) ->
                     authorizeRequests
                             //.requestMatchers(PathRequest.toH2Console()).permitAll()
                             .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/")).permitAll()
                             .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/login/**")).permitAll()
+                            .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/auth/login")).permitAll()
                             //.requestMatchers("/main/**", "/main/v1/board/**").hasRole(RoleTypeEnum.USER.name())
                             .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**")).permitAll()
+                            .requestMatchers(new AntPathRequestMatcher("/main/v1/user")).permitAll()
+                            ///main/v1/user/login
                             .anyRequest().authenticated()
             )// 3번
             .exceptionHandling((exceptionConfig) ->
-                    exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
+                    exceptionConfig
+                            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                            .accessDeniedHandler(jwtAccessDeniedHandler)
             )
-            .logout((logoutConfig) ->
-                    logoutConfig.logoutSuccessUrl("/")
-            );
-            //.userDetailsService(myUserDetailsService); ; // 401 403 관련 예외처리
+            //addFilter
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            //session state less?
+            .sessionManagement(httpSecuritySessionManagementConfigurer -> {
+                httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            });
 
         return http.build();
     }
+
+    /*
 
     private final AuthenticationEntryPoint unauthorizedEntryPoint =
             (request, response, authException) -> {
@@ -105,4 +122,6 @@ public class SecurityConfig {
         private final HttpStatus status;
         private final String message;
     }
+    */
+
 }
