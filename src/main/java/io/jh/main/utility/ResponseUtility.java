@@ -68,4 +68,38 @@ public class ResponseUtility {
                         "SUCCESS", page),
                 HttpStatus.OK);
     }
+
+    public static ResponseEntity<ResponseData<Void>> createFailResponse(
+            String statusCode, HttpStatus httpStatus) {
+        return new ResponseEntity<>(createFailResponseData(statusCode), httpStatus);
+    }
+
+    public static <T> ResponseEntity<ResponseData<T>> createFailResponse(
+            String statusCode, T data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(createFailResponseData(statusCode, data), httpStatus);
+    }
+
+    public static ResponseEntity<ResponsePagingData<Void>> createFailPagingResponse(
+            String statusCode, HttpStatus httpStatus) {
+        return new ResponseEntity<>(createFailResponsePagingData(statusCode), httpStatus);
+    }
+
+    private static <T>ResponseData<T> createFailResponseData(String statusCode, T data) {
+        return ResponseData.<T>builder()
+                .statusCode(statusCode)
+                .data(data)
+                .build();
+    }
+
+    private static ResponseData<Void> createFailResponseData(String statusCode) {
+        return ResponseData.<Void>builder()
+                .statusCode(statusCode)
+                .build();
+    }
+
+    private static ResponsePagingData<Void> createFailResponsePagingData(String statusCode) {
+        return ResponsePagingData.<Void>byPageData()
+                .statusCode(statusCode)
+                .build();
+    }
 }

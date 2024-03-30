@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("in JwtAuthFilter");
         String authHeader = subStringToken(request.getHeader("Authorization"));
         String userName = null;
-        log.info(authHeader);
+
         if(authHeader != null && tokenUtility.validateToken(authHeader)) {
             userName = tokenUtility.getSubject(authHeader);
             Authentication auth = tokenUtility.getAuthentication(authHeader);
@@ -53,7 +53,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private String subStringToken(String header) {
-        log.info("check header > " + header);
         if(StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             return header.substring(7);
         }

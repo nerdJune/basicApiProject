@@ -63,15 +63,14 @@ public class SecurityConfig {
                             frameOptionsConfig.disable()
                     )
             )
-                // 2번
+            // 2번
             .authorizeHttpRequests((authorizeRequests) ->
                     authorizeRequests
                             //.requestMatchers(PathRequest.toH2Console()).permitAll()
                             .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/")).permitAll()
                             .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/login/**")).permitAll()
-                            .requestMatchers(new MvcRequestMatcher(new HandlerMappingIntrospector(), "/auth/login")).permitAll()
-                            //.requestMatchers("/main/**", "/main/v1/board/**").hasRole(RoleTypeEnum.USER.name())
-                            .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**")).permitAll()
+                            // /main/v1/board > GET 요청만 허용, POST 불가
+                            .requestMatchers(new AntPathRequestMatcher("/main/v1/board/**", HttpMethod.GET.name())).permitAll()
                             .requestMatchers(new AntPathRequestMatcher("/main/v1/user")).permitAll()
                             ///main/v1/user/login
                             .anyRequest().authenticated()
