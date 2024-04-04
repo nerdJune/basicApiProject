@@ -34,14 +34,15 @@ public class MemberService {
         checkJoinUserData(memberJoinRequestDTO);
 
         //저장 전 DTO -> VO
-        MemberVO memberVO = MemberVO.builder().memberJoinRequestDTO(memberJoinRequestDTO).joinUserDataBuilder();
+        MemberVO memberVO =
+                MemberVO.builder().memberJoinRequestDTO(memberJoinRequestDTO).joinUserDataBuilder();
         memberVO.setPassword(passwordEncoder.encode(memberJoinRequestDTO.getPassword()));
 
         memberRepository.save(memberVO);
     }
 
     //회원 단건 조회
-    public MemberResponseDTO selectMember(String nickName) {
+    public MemberResponseDTO selectMemberFromNickname(String nickName) {
         //VO를 ResponseDTO로 만들어보자
         MemberVO memberVO = memberRepository.findByNickName(nickName).orElseThrow(
                 () -> {
@@ -60,7 +61,7 @@ public class MemberService {
         });
     }
     
-    public Long selectMemberId(String nickName) {
+    public Long selectMemberIdFromNickName(String nickName) {
         Optional<MemberVO> memberVO = memberRepository.findByNickName(nickName);
         return memberVO.map(MemberVO::getMemberId).orElse(0L);
     }
@@ -85,12 +86,20 @@ public class MemberService {
         );
     }
 
-    public MemberVO userLogin(String email) {
+    public MemberVO userCheck(String email) {
         return memberRepository.findByEmail(email).orElseThrow(
                     () -> {
             logger.error("존재하지 않는 회원입니다. 조회시간 : {}");
             throw new RuntimeException("누구야 이사람");
         });
+    }
+
+    public void userExistCheck(String email) {
+        memberRepository.findByEmail(email).orElseThrow(
+                () -> {
+                    logger.error("존재하지 않는 회원입니다. 조회시간 : {}");
+                    throw new RuntimeException("누구야 이사람");
+                });
     }
 
     //가입 시 닉네임 존재 여부

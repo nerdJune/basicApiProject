@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
                 .requestMatchers(new AntPathRequestMatcher("/api-docs/**"))
-                .requestMatchers(new AntPathRequestMatcher("/main/v1/user/login"))
+                .requestMatchers(new AntPathRequestMatcher("/main/v1/auth/login"))
                 .requestMatchers(new AntPathRequestMatcher("/main/v1/redis/**"))
                 ;
     }

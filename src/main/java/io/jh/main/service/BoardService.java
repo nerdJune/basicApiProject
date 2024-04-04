@@ -37,6 +37,9 @@ public class BoardService {
         /*
             제목, 내용이 적절 한 지 필터링 필요. ex) 금칙어
          */
+        //회원 인지
+        MemberVO memberVO = memberService.userCheck(boardWriteRequestDTO.getEmail());
+        boardWriteRequestDTO.setWriterId(memberVO.getMemberId());
 
         //dto to vo
         BoardVO boardVO =
@@ -96,7 +99,7 @@ public class BoardService {
     public Page<BoardResponseDTO> selectBoardList(String searchText, BoardSearchTypeEnum type, Pageable pageable) {
         //검색어, 구분자(제목/내용/작성자)
         if(BoardSearchTypeEnum.WRITER.equals(type)) {
-            searchText = memberService.selectMemberId(searchText).toString();
+            searchText = memberService.selectMemberIdFromNickName(searchText).toString();
         }
         if(searchText == null) searchText = "";
         searchText = searchText.trim().replace(" ","");

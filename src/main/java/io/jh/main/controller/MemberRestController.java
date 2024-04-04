@@ -24,6 +24,8 @@ public class MemberRestController {
 
     private final MemberService memberService;
 
+    private final LoginService loginService;
+
     @Operation(
             summary = "초간단 회원 가입",
             method = "POST",
@@ -41,9 +43,9 @@ public class MemberRestController {
             parameters = {@Parameter(name = "nickName", description = "조회할 회원의 nickName")})
     @GetMapping("/{nickName}")
     public ResponseEntity<ResponseData<MemberResponseDTO>> selectMember(@PathVariable(name = "nickName") String nickName) {
-        System.out.println(">>>>>>> " + nickName);
-        return ResponseUtility.createGetSuccessResponse(memberService.selectMember(nickName));
+        return ResponseUtility.createGetSuccessResponse(memberService.selectMemberFromNickname(nickName));
     }
+
     @Operation(
             summary = "회원 목록 조회",
             method = "GET",
@@ -56,15 +58,5 @@ public class MemberRestController {
         Pageable pageable = CustomPageRequest.of(page, size, sort);
         return ResponseUtility.createSuccessPagingResponse(
                 memberService.selectMemberList(pageable));
-    }
-
-    private final LoginService loginService;
-
-    @PostMapping("/login")
-    public ResponseEntity<ResponseData<SignInResponseDTO>> signIn(
-            @RequestBody SignInRequestDTO signInRequestDTO) {
-
-        return ResponseUtility.createPostSyncSuccessResponse(
-                loginService.userLogin(signInRequestDTO));
     }
 }

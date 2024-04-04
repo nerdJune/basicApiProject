@@ -33,4 +33,10 @@ public class BoardWriteRequestDTO {
             description = "작성자 아이디",
             example = "일단 넣어 놓은 건데 바꿔야함.")
     private Long writerId;
+
+    @Schema(
+            name = "email",
+            description = "작성자",
+            example = "asdf1@adsf.com")
+    private String email;
 }

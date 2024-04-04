@@ -25,7 +25,7 @@ public class MyUserDetailService implements UserDetailsService {
         log.info("in loadUserByUsername");
 
         //username -> email
-        MemberVO memberVO = memberService.userLogin(username);
+        MemberVO memberVO = memberService.userCheck(username);
 
         log.info("end loadUserByUsername : " + memberVO.toString());
         return User.builder()
