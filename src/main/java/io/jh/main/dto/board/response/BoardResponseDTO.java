@@ -24,6 +24,9 @@ public class BoardResponseDTO implements Serializable {
     //변환 필요함
     private Long boardCategory;
 
+    @Schema(name = "boardCategoryName", example = "자유")
+    private String boardCategoryName;
+
     @Schema(name = "boardTitle", example = "대단히 반갑습니다.")
     private String boardTitle;
 

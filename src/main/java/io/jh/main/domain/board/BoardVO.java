@@ -19,6 +19,7 @@ import java.time.OffsetDateTime;
 @DynamicUpdate
 @DynamicInsert
 public class BoardVO {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "board_id")
