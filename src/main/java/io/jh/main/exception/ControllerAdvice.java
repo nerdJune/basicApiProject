@@ -17,4 +17,9 @@ public class ControllerAdvice {
     protected ResponseEntity<ResponseData<Void>> handleException(Exception exception) {
         return ResponseUtility.createFailResponse("FAIL", HttpStatus.OK);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<ResponseData<String>> handleException(RuntimeException exception) {
+        return ResponseUtility.createFailResponse("FAIL", exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
